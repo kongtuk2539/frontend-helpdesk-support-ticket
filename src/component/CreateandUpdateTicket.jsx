@@ -1,5 +1,8 @@
 import { useEffect, useState, useRef } from 'react'
 import { Dropdown, Button } from "antd";
+import Dialog from './Dialog';
+import Spinloading from './Spinloading';
+
 
 
 function CreateandUpdateTicket({
@@ -15,7 +18,10 @@ function CreateandUpdateTicket({
     const [isUpdate, setIsUpdate] = useState(false)
     const [id, setId] = useState(null)
     const [contactInformation, setContactInformation] = useState("")
+    const [isLoading, setIsLoading] = useState(false);
     const overlayRef = useRef(null);
+    const [showDialogConfirm, setShowDialogConfirm] = useState(false);
+
     const [formErrors, setFormErrors] = useState({
         title: "",
         description: "",
@@ -73,7 +79,7 @@ function CreateandUpdateTicket({
     };
 
 
-    const submit = () => {
+    const submit = async () => {
         const isValid = validateForm();
         const data = {
             "ticket_title": title,
@@ -81,14 +87,25 @@ function CreateandUpdateTicket({
             "ticket_contact": contactInformation,
             "ticket_status": status
         }
-        if (isValid && !isUpdate) {
-            CreateTicketData(data);
-            setIsShowDialogCreateandUpdate(false);
-            return
+
+        if (!isValid) {
+            return;
         }
-        if (isValid && isUpdate) {
-            UpdateTicketData(data, id);
+
+        setIsLoading(true)
+
+        if (!isUpdate) {
+            await CreateTicketData(data);
             setIsShowDialogCreateandUpdate(false);
+            setIsLoading(false)
+            return
+
+        }
+
+        if (isUpdate) {
+            await UpdateTicketData(data, id);
+            setIsShowDialogCreateandUpdate(false);
+            setIsLoading(false)
             return
         }
 
@@ -216,14 +233,13 @@ function CreateandUpdateTicket({
 
                         <button type='button'
                             className={`${isUpdate ? 'bg-green-600 hover:bg-green-500' : 'bg-purple hover:bg-[#9F73FF]'} rounded-lg font-bold text-white w-3/4 px-6 `}
-                            onClick={() => submit()}
+                            onClick={() => setShowDialogConfirm(true)}
                         >{isUpdate ? 'Update' : 'Create'}</button>
                     </div>
-
+                    {showDialogConfirm ? <Dialog submit={submit} message={isUpdate ? 'Updated' : 'Created'} setShowDialogConfirm={setShowDialogConfirm} /> : null}
                 </div>
-
             </div>
-
+            {isLoading ? <Spinloading /> : null}
         </div>
     )
 }

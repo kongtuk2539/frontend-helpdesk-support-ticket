@@ -1,7 +1,34 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 
 function TicketCard({ updateTicket, data }) {
-    const title = "ทำการอัปเดทปัญหา";
+    const [statusColor, setStatusColor] = useState('bg-purple')
+    const statusOrder = [
+        {
+            value: 'Pending',
+            color: 'bg-purple'
+        },
+        {
+            value: 'Accepted',
+            color: 'bg-green-500'
+        },
+        {
+            value: 'Resolved',
+            color: 'bg-orange-400'
+        },
+        {
+            value: 'Rejected',
+            color: 'bg-red-400'
+        },
+    ]
+
+    function getColor(value) {
+        const filteredStatus = statusOrder.filter(status => status.value === value);
+        return filteredStatus.length > 0 ? filteredStatus[0].color : 'bg-purple';
+    }
+
+    useEffect(() => {
+        setStatusColor(getColor(data.ticket_status));
+    }, []);
 
     return (
         <>
@@ -46,7 +73,7 @@ function TicketCard({ updateTicket, data }) {
                     <div className='cursor-pointer mt-4 flex justify-center items-center w-2/4 h-10 rounded-lg font-bold text-white bg-purple px-6 hover:bg-[#9F73FF]' onClick={() => updateTicket(data)}>
                         <button>Update</button>
                     </div>
-                    <div className='mt-4 flex justify-center items-center w-1/4 h-10  rounded-lg font-bold text-white bg-purple'>
+                    <div className={`mt-4 flex justify-center items-center w-1/4 h-10  rounded-lg font-bold text-white ${statusColor}`}>
                         <p>{data.ticket_status}</p>
                     </div>
                 </div>

@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import TicketCard from '../component/TicketCard';
 import CreateandUpdateTicket from '../component/CreateandUpdateTicket';
 import { GetTicket } from '../service/GetTicket';
 import { CreateTicket } from '../service/CreateTicket';
 import { UpdateTicket } from '../service/UpdateTicket';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 
 function Home() {
     const [isShowDialogCreateandUpdate, setIsShowDialogCreateandUpdate] = useState(false);
@@ -13,6 +17,7 @@ function Home() {
     const [totalPages, setTotalPages] = useState(0);
     const [currentData, setCurrentData] = useState(null);
     const [statusUpdate, setStatusUpdate] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState("status");
 
     const filterItems = [
@@ -23,6 +28,7 @@ function Home() {
         { value: 'resolved', label: 'Resolved' },
         { value: 'rejected', label: 'Rejected' },
     ];
+
 
     // const startIndex = (currentPage - 1) * itemsPerPage;
     // const endIndex = startIndex + itemsPerPage;
@@ -53,6 +59,32 @@ function Home() {
         const endIndex = startIndex + itemsPerPage;
         setTotalPages(Math.ceil(sortedTickets.length / itemsPerPage));
         setCurrentData(sortedTickets.slice(startIndex, endIndex));
+    }
+
+    const snackbar = (message, status) => {
+        if (status == 1) {
+            return toast.success(message, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        }
+
+        toast.error(message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+        });
     }
 
     const parseDate = (dateString) => {
@@ -98,7 +130,9 @@ function Home() {
     useEffect(() => {
 
         const GetTicketData = async () => {
+            setIsLoading(true);
             const response = await GetTicket();
+            setIsLoading(false);
             if (response.message == "สำเร็จ") {
                 const data = [...response.data].sort((a, b) => b.ticket_id - a.ticket_id);
                 const startIndex = (currentPage - 1) * itemsPerPage;
@@ -115,8 +149,6 @@ function Home() {
 
     }, [currentPage, statusUpdate, filter]);
 
-    console.log(currentData);
-    console.log(filter);
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
@@ -136,14 +168,20 @@ function Home() {
         let response = await CreateTicket(data);
         if (response.message == "บันทึกข้อมูลสำเร็จ") {
             setStatusUpdate(prevStatus => prevStatus + 1);
+            snackbar("Create Successfully", 1);
+            return
         }
+        snackbar("Error There's something wrong.", 0);
     }
 
     const UpdateTicketData = async (data, id) => {
         let response = await UpdateTicket(data, id);
         if (response.message == "บันทึกข้อมูลสำเร็จ") {
             setStatusUpdate(prevStatus => prevStatus + 1);
+            snackbar("Update Successfully", 1);
+            return
         }
+        snackbar("Error There's something wrong.", 0);
     }
 
 
@@ -174,16 +212,21 @@ function Home() {
                         onClick={() => setIsShowDialogCreateandUpdate(!isShowDialogCreateandUpdate)}>Create Ticket</button>
                 </div>
 
-                <div className='cardSection mt-8 flex-wrap flex justify-center lg:p-4 gap-6'>
-                    {currentData ?
-                        currentData.map(item => (
-                            <TicketCard updateTicket={updateTicket} data={item} key={item.ticket_id} />
-                        ))
-                        : null}
+                {isLoading ?
+                    <div className='flex justify-center items-center h-[600px]'>
+                        <Spin indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />} />
+                    </div>
+                    :
+                    <div className='cardSection mt-8 flex-wrap flex justify-center lg:p-4 gap-6'>
+                        {currentData ?
+                            currentData.map(item => (
+                                <TicketCard updateTicket={updateTicket} data={item} key={item.ticket_id} />
+                            ))
+                            : null}
 
-                    {/* {isShowDialogCreateandUpdate && !data ? <CreateandUpdateTicket setIsShowDialogCreateandUpdate={setIsShowDialogCreateandUpdate} setData={setData} statusUpdate={"Accepted"} /> : null} */}
-                    {isShowDialogCreateandUpdate ? <CreateandUpdateTicket setIsShowDialogCreateandUpdate={setIsShowDialogCreateandUpdate} setData={setData} data={data} CreateTicketData={CreateTicketData} UpdateTicketData={UpdateTicketData} /> : null}
-                </div>
+                        {/* {isShowDialogCreateandUpdate && !data ? <CreateandUpdateTicket setIsShowDialogCreateandUpdate={setIsShowDialogCreateandUpdate} setData={setData} statusUpdate={"Accepted"} /> : null} */}
+                        {isShowDialogCreateandUpdate ? <CreateandUpdateTicket setIsShowDialogCreateandUpdate={setIsShowDialogCreateandUpdate} setData={setData} data={data} CreateTicketData={CreateTicketData} UpdateTicketData={UpdateTicketData} /> : null}
+                    </div>}
 
                 <div className="mt-4 flex justify-center">
                     {Array.from({ length: totalPages }).map((_, index) => (
@@ -200,6 +243,7 @@ function Home() {
                 </div>
             </div>
 
+            <ToastContainer />
         </div >
     )
 }
