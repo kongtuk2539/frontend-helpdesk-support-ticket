@@ -3,7 +3,7 @@ import AxiosService from "./AxiosService";
 export const CreateTicket = async (data) => {
     try {
         const method = 'POST';
-        const url = 'https://localhost:7232/api/Ticket/CreateTicket';
+        const url = 'api/Ticket/CreateTicket';
         const body = data;
 
         const response = await AxiosService(method, url, body);

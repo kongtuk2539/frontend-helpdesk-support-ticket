@@ -39,10 +39,6 @@ function TicketCard({ updateTicket, data }) {
                         <p>{data.ticket_title}</p>
                     </div>
                 </div>
-                {/* <div className='overflow-y-auto'>
-                    {data.ticket_description}
-                </div> */}
-
 
                 <div className='body flex justify-between text-lg h-28 border-b-2'>
                     <div className='title flex flex-col'>
@@ -70,10 +66,11 @@ function TicketCard({ updateTicket, data }) {
                 </div>
 
                 <div className='flex flex-row-reverse justify-between '>
-                    <div className='cursor-pointer mt-4 flex justify-center items-center w-2/4 h-10 rounded-lg font-bold text-white bg-purple px-6 hover:bg-[#9F73FF]' onClick={() => updateTicket(data)}>
+                    <div className='cursor-pointer mt-4 flex justify-center items-center w-2/4 h-10 rounded-lg font-bold 
+                    text-white bg-gradient-to-l from-indigo-400 bg-deep-purple px-6 drop-shadow-lg hover:bg-[#9F73FF]' onClick={() => updateTicket(data)}>
                         <button>Update</button>
                     </div>
-                    <div className={`mt-4 flex justify-center items-center w-1/4 h-10  rounded-lg font-bold text-white ${statusColor}`}>
+                    <div className={`mt-4 drop-shadow-lg flex justify-center items-center w-1/4 h-10  rounded-lg font-bold text-white ${statusColor}`}>
                         <p>{data.ticket_status}</p>
                     </div>
                 </div>

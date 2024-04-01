@@ -1,7 +1,10 @@
 import { useEffect, useState, useRef } from 'react'
-import { Dropdown, Button } from "antd";
+
 import Dialog from './Dialog';
 import Spinloading from './Spinloading';
+
+import { Dropdown, Button } from "antd";
+
 
 
 
@@ -21,97 +24,11 @@ function CreateandUpdateTicket({
     const [isLoading, setIsLoading] = useState(false);
     const overlayRef = useRef(null);
     const [showDialogConfirm, setShowDialogConfirm] = useState(false);
-
     const [formErrors, setFormErrors] = useState({
         title: "",
         description: "",
         contactInformation: "",
     });
-
-    const handleClick = (e) => {
-        if (e.target === overlayRef.current) {
-            setIsShowDialogCreateandUpdate(false);
-        }
-    };
-
-    useEffect(() => {
-        if (statusUpdate) {
-            setStatus(statusUpdate)
-        }
-
-        if (data) {
-            setTitle(data.ticket_title);
-            setDescription(data.ticket_description);
-            setContactInformation(data.ticket_contact);
-            setStatus(data.ticket_status);
-            setId(data.ticket_id);
-            setIsUpdate(true);
-        }
-
-        return () => {
-            setData(null);
-        }
-    }, [data, setData, statusUpdate]);
-
-    const validateForm = () => {
-        let errors = {};
-        let isValid = true;
-
-        console.log(`Valid Title => ${!title.trim()}`)
-        console.log(`Valid Description => ${description.trim().length < 2}`)
-        console.log(`Valid ContactInformation => ${contactInformation.trim().length < 2}`)
-        console.log(`Valid ContactInformation => ${contactInformation.trim().length > 150}`)
-        if (!title.trim() || title.trim().length > 50) {
-            errors.title = "Please enter your title";
-            isValid = false;
-        }
-        if (description.trim().length < 2 || description.trim().length > 250) {
-            errors.description = "Please enter your description";
-            isValid = false;
-        }
-        if (contactInformation.trim().length < 2 || contactInformation.trim().length > 150) {
-            errors.contactInformation = "Please enter your contactInformation";
-            isValid = false;
-        }
-
-        setFormErrors(errors);
-        return isValid;
-    };
-
-
-    const submit = async () => {
-        const isValid = validateForm();
-        const data = {
-            "ticket_title": title,
-            "ticket_description": description,
-            "ticket_contact": contactInformation,
-            "ticket_status": status
-        }
-
-        if (!isValid) {
-            return;
-        }
-
-        setIsLoading(true)
-
-        if (!isUpdate) {
-            await CreateTicketData(data);
-            setIsShowDialogCreateandUpdate(false);
-            setIsLoading(false)
-            return
-
-        }
-
-        if (isUpdate) {
-            await UpdateTicketData(data, id);
-            setIsShowDialogCreateandUpdate(false);
-            setIsLoading(false)
-            return
-        }
-
-    }
-
-
 
     const items = [
         {
@@ -151,6 +68,83 @@ function CreateandUpdateTicket({
             value: 'Rejected'
         },
     ];
+
+    const handleClick = (e) => {
+        if (e.target === overlayRef.current) {
+            setIsShowDialogCreateandUpdate(false);
+        }
+    };
+
+    useEffect(() => {
+        if (statusUpdate) {
+            setStatus(statusUpdate)
+        }
+
+        if (data) {
+            setTitle(data.ticket_title);
+            setDescription(data.ticket_description);
+            setContactInformation(data.ticket_contact);
+            setStatus(data.ticket_status);
+            setId(data.ticket_id);
+            setIsUpdate(true);
+        }
+
+        return () => {
+            setData(null);
+        }
+    }, [data, setData, statusUpdate]);
+
+    const validateForm = () => {
+        let errors = {};
+        let isValid = true;
+
+        if (!title.trim() || title.trim().length > 50) {
+            errors.title = "Please enter your title";
+            isValid = false;
+        }
+        if (description.trim().length < 2 || description.trim().length > 250) {
+            errors.description = "Please enter your description";
+            isValid = false;
+        }
+        if (contactInformation.trim().length < 2 || contactInformation.trim().length > 150) {
+            errors.contactInformation = "Please enter your contactInformation";
+            isValid = false;
+        }
+
+        setFormErrors(errors);
+        return isValid;
+    };
+
+    const submit = async () => {
+        const isValid = validateForm();
+        const data = {
+            "ticket_title": title,
+            "ticket_description": description,
+            "ticket_contact": contactInformation,
+            "ticket_status": status
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        setIsLoading(true)
+
+        if (!isUpdate) {
+            await CreateTicketData(data);
+            setIsShowDialogCreateandUpdate(false);
+            setIsLoading(false)
+            return
+        }
+
+        if (isUpdate) {
+            await UpdateTicketData(data, id);
+            setIsShowDialogCreateandUpdate(false);
+            setIsLoading(false)
+            return
+        }
+
+    }
 
     return (
         <div className="fixed top-0 left-0 w-full h-full bg-gray-op90 flex items-center justify-center z-50 " onClick={handleClick} ref={overlayRef}>
@@ -233,7 +227,11 @@ function CreateandUpdateTicket({
 
                         <button type='button'
                             className={`${isUpdate ? 'bg-green-600 hover:bg-green-500' : 'bg-purple hover:bg-[#9F73FF]'} rounded-lg font-bold text-white w-3/4 px-6 `}
-                            onClick={() => setShowDialogConfirm(true)}
+                            onClick={() => {
+                                if (validateForm()) {
+                                    setShowDialogConfirm(true)
+                                }
+                            }}
                         >{isUpdate ? 'Update' : 'Create'}</button>
                     </div>
                     {showDialogConfirm ? <Dialog submit={submit} message={isUpdate ? 'Updated' : 'Created'} setShowDialogConfirm={setShowDialogConfirm} /> : null}

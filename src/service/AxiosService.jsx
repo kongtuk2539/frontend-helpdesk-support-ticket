@@ -4,7 +4,7 @@ const AxiosService = async (method, url, body) => {
     try {
         const response = await axios({
             method: method,
-            url: url,
+            url: `https://localhost:7232/${url}`,
             data: body,
         });
 
