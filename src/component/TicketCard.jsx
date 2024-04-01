@@ -40,14 +40,14 @@ function TicketCard({ updateTicket, data }) {
                     </div>
                 </div>
 
-                <div className='body flex justify-between text-lg h-28 border-b-2'>
+                <div className='body flex justify-between text-lg h-24 border-b-2'>
                     <div className='title flex flex-col'>
                         <h3 className='text-gray-400'>Description</h3>
                         <p className='overflow-auto break-all'>{data.ticket_description}</p>
                     </div>
                 </div>
 
-                <div className='body flex justify-between text-lg h-28 border-b-2'>
+                <div className='body flex justify-between text-lg h-[86px] border-b-2'>
                     <div className='title flex flex-col'>
                         <h3 className='text-gray-400'>Contact Information</h3>
                         <p className='overflow-auto break-all'>{data.ticket_contact}</p>
@@ -65,7 +65,7 @@ function TicketCard({ updateTicket, data }) {
                     </div>
                 </div>
 
-                <div className='flex flex-row-reverse justify-between '>
+                <div className='flex flex-row-reverse justify-between h-20 items-end'>
                     <div className='cursor-pointer mt-4 flex justify-center items-center w-2/4 h-10 rounded-lg font-bold 
                     text-white bg-gradient-to-l from-indigo-400 bg-deep-purple px-6 drop-shadow-lg hover:bg-[#9F73FF]' onClick={() => updateTicket(data)}>
                         <button>Update</button>

@@ -4,7 +4,7 @@ import phone from '../assets/image/phone.png'
 
 function Footer() {
     return (
-        <div className="w-full h-[110px] bg-gradient-to-r from-indigo-400 bg-deep-purple drop-shadow-lg p-2">
+        <div className="bottom-0 left-0 w-full h-[110px] bg-gradient-to-r from-indigo-400 bg-deep-purple drop-shadow-lg p-2">
             <div className='pt-3 px-8 flex items-center gap-2'>
                 <img className='w-8' src={email} alt="" />
                 <h1 className='font-roboto-mono text-white text-xl'>t.kongtuk@gmail.com</h1>

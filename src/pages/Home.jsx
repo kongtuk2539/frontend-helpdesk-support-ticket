@@ -216,21 +216,21 @@ function Home() {
                             currentData.map(item => (
                                 <TicketCard updateTicket={updateTicket} data={item} key={item.ticket_id} />
                             ))
-                            : null}
+                            : <div className='font-roboto-mono text-4xl h-[400px] flex items-center'><p>No information found</p></div>}
 
                         {isShowDialogCreateandUpdate ? <CreateandUpdateTicket setIsShowDialogCreateandUpdate={setIsShowDialogCreateandUpdate} setData={setData} data={data} CreateTicketData={CreateTicketData} UpdateTicketData={UpdateTicketData} /> : null}
                     </div>}
 
                 <div className="mt-4 flex justify-center">
 
-                    {totalPages > 5 && (
+                    {totalPages > 3 && (
                         <>
                             <button
                                 key="first"
                                 onClick={() => handlePageChange(1)}
                                 className={`border-2 border-deep-purple mx-2 p-2 font-roboto-mono font-bold text-lg hover:bg-[#9F73FF] rounded`}
                             >
-                                &lt;
+                                &lt; first page
                             </button>
                             {[currentPage - 1, currentPage, currentPage + 1].map(page => (
                                 page > 0 && page <= totalPages &&
@@ -253,7 +253,7 @@ function Home() {
                         </>
                     )}
 
-                    {totalPages <= 5 && (
+                    {totalPages <= 3 && (
                         <>
                             {Array.from({ length: totalPages }).map((_, index) => (
                                 <button
